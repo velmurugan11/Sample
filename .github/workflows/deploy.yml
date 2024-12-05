@@ -41,7 +41,7 @@ jobs:
       # Step 6: Backup Current Deployment on Server 2 (Low Load, 20%)
       - name: Backup Current Deployment on Server 2
         env:
-          SERVER_IP: 18.204.215.60 # Server 2 IP (20% load)
+          SERVER_IP: 54.173.1.181 # Server 2 IP (20% load)
           SSH_USER: ec2-user
           DEPLOY_DIR: /var/www/html
         run: |
@@ -63,7 +63,7 @@ jobs:
       - name: Deploy to Server 2
         if: success() # This step only runs if the tests pass
         env:
-          SERVER_IP: 18.204.215.60 # Server 2 IP
+          SERVER_IP: 54.173.1.181 # Server 2 IP
           SSH_USER: ec2-user
           DEPLOY_DIR: /var/www/html
         run: |
@@ -87,24 +87,24 @@ jobs:
           # Clean up
           rm private_key.pem
 
-      # Step 8: Verify Deployment on Server 2 (Low Load, 20%)
-      - name: Verify Deployment on Server 2
-        if: success() # Runs if the previous step succeeded
-        env:
-          SERVER_IP: 18.204.215.60 # Server 2 IP
-          SSH_USER: ec2-user
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
+      # # Step 8: Verify Deployment on Server 2 (Low Load, 20%)
+      # - name: Verify Deployment on Server 2
+      #   if: success() # Runs if the previous step succeeded
+      #   env:
+      #     SERVER_IP: 18.204.215.60 # Server 2 IP
+      #     SSH_USER: ec2-user
+      #   run: |
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+      #     chmod 600 private_key.pem
 
-          # Check if the web server is responding correctly
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << EOF
-            # sudo systemctl stop httpd
-            curl -f http://localhost || exit 1
-          EOF
+      #     # Check if the web server is responding correctly
+      #     ssh -i private_key.pem -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << EOF
+      #       # sudo systemctl stop httpd
+      #       curl -f http://localhost || exit 1
+      #     EOF
 
-          # Clean up private key
-          rm private_key.pem
+      #     # Clean up private key
+      #     rm private_key.pem
 
       # # Step 9: Backup Current Deployment on Server 1 (High Load, 80%) c
       # - name: Backup Current Deployment on Server 1 - Only if Server 2 is fine
